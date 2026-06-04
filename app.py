@@ -1,5 +1,4 @@
 
-
 import streamlit as st
 
 
@@ -23,7 +22,7 @@ def extract_text(pdf_file):
 # 2. Timeliness score (0–40)
 # ----------------------------
 def timeliness_score(last_updated_year):
-    if last_updated_year in [2024, 2025]:
+    if last_updated_year in [2024, 2025, 2026]:
         return 40
     elif last_updated_year == 2023:
         return 32
