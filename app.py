@@ -264,7 +264,41 @@ def discrimination_check(text):
         "inferior race",
         "foreigners are",
         "women are less capable",
-        "elderly people cannot"
+        "elderly people cannot",
+    # nationality keywords
+        "allochtonen",
+        "buitenlanders",
+        "vreemdelingen",
+        "niet-westerse",
+        "moslims zijn",
+        "marokkanen zijn",
+        "turken zijn",
+        "asielzoekers zijn",
+        "vluchtelingen zijn",
+    # gender keywords
+        "vrouwen zijn minder",
+        "vrouwen kunnen niet",
+        "mannen horen",
+        "vrouwelijke medewerkers zijn",
+        "mannen zijn beter",
+        "zwakke vrouwen",
+        "typisch vrouwengedrag",
+        "typisch mannengedrag",
+    # sexuality keywords
+        "homoseksuelen zijn",
+        "homo's zijn",
+        "lesbiennes zijn",
+        "transgenders zijn",
+        "transpersonen zijn",
+        "genderideologie",
+        "afwijkende seksuele voorkeur",
+    # patterns
+        r"\b.*zijn altijd\b",
+        r"\b.*zijn meestal\b",
+        r"\b.*kunnen niet\b",
+        r"\b.*horen niet\b",
+        r"\b.*zijn minder\b",
+        r"\b.*zijn ongeschikt\b"
     ]
 
     for term in suspicious_terms:
