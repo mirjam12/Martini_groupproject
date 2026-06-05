@@ -245,7 +245,7 @@ def suspicious_urls(text):
 
 def draft_check(text):
 
-    pattern = r"\b(DRAFT|PRELIMINARY|FOR REVIEW|NOT FOR CLINICAL USE)\b"
+    pattern = r"\b(DRAFT|PRELIMINARY|FOR REVIEW|NOT FOR CLINICAL USE|nog in te vullen|wordt aangevuld|in ontwikkeling|concept)\b"
 
     match = re.search(pattern, text, re.IGNORECASE)
 
