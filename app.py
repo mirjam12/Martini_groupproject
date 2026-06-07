@@ -63,16 +63,37 @@ def structural_score(text):
         issues.append("Document too short (<150 words)")
 
     # Steps
-    if re.search(r"(step \d|1\.|2\.|3\.)", text.lower()):
+    if re.search(r"(step \d|1\.|2\.|3\.)", text.lower()): # finding numbered orders of steps
         score += 5
     else:
         issues.append("No explicit follow-up steps")
 
     # Abbreviations
-    if not re.search(r"\b[A-Z]{3,}\b", text):
-        score += 5
+    KNOWN_MEDICAL = {
+    "MRI",
+    "CT",
+    "ECG",
+    "EEG",
+    "COPD",
+    "ICU",
+    "ICT",
+    "HR",
+    "GDPR",
+    "HIPAA"
+    }
+    abbreviations = re.findall(r"\b[A-Z]{2,}\b", text)
+
+    unknown = [
+        a for a in abbreviations
+        if a not in KNOWN_MEDICAL
+    ]
+    
+    if unknown:
+        issues.append(
+            f"Possible undefined abbreviations: {', '.join(unknown[:10])}"
+        )
     else:
-        issues.append("Possible undefined abbreviations")
+        score += 5
 
     return score, issues
 
