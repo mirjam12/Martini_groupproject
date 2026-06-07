@@ -224,7 +224,7 @@ def suspicious_urls(text):
     suspicious_keywords = [
         "bit.ly",
         "tinyurl",
-        ".ru",
+      #  ".ru",
         ".xyz",
         ".tk",
         "pastebin"
@@ -255,7 +255,7 @@ def draft_check(text):
     return True, "Passed"
 
 # ----------------------------
-#  Kill switch for discrimination
+#  Human review for discrimination
 # ----------------------------
 
 def discrimination_check(text):
