@@ -330,11 +330,18 @@ def discrimination_check(text):
         r"\b.*zijn ongeschikt\b"
     ]
 
+    penalties = []
     for term in suspicious_terms:
         if term.lower() in text.lower():
-            return False, f"Potential discriminatory phrase: {term}. Please check document!"
+            penalties.append(term)
 
-    return True, "Passed"
+    if penalties:
+        return (
+            0,  # score penalty handled outside
+            f"Human review required: potential biased or discriminatory phrasing detected: {', '.join(penalties[:5])}"
+        )
+
+    return (15, "Passed")
 
 
 # ----------------------------
