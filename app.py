@@ -107,15 +107,13 @@ def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 # API key + url are saved in Streamlit secrets! Retrieving them: 
-st.secrets["QDRANT_URL"]
-st.secrets["QDRANT_API_KEY"]
 
 @st.cache_resource
 def get_qdrant():
     return QdrantClient(
-    url=os.getenv("QDRANT_URL"),
-    api_key=os.getenv("QDRANT_API_KEY")
-)
+        url=st.secrets["QDRANT_URL"],
+        api_key=st.secrets["QDRANT_API_KEY"]
+    )
 
 def duplication_score(text, collection_name="documents"):
     model = load_model()
