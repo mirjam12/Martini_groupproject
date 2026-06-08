@@ -8,6 +8,7 @@ from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 import os
 
+
 # ----------------------------
 # 1. Extract text from PDF
 # ----------------------------
@@ -107,7 +108,6 @@ def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 # API key + url are saved in Streamlit secrets! Retrieving them: 
-
 @st.cache_resource
 def get_qdrant():
     return QdrantClient(
@@ -122,6 +122,13 @@ def duplication_score(text, collection_name="documents"):
     vector = model.encode(text).tolist()
 
     try:
+        # Checking if collection exists first
+        collections = qdrant.get_collections().collections
+        collection_names = [c.name for c in collections]
+
+        if collection_name not in collection_names:
+            return 20, 0.0, "Collection missing — treated as unique"
+
         results = qdrant.search(
             collection_name=collection_name,
             query_vector=vector,
