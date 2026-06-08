@@ -7,6 +7,11 @@ from dateutil import parser
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 import os
+# to be deleted! 
+if st.button("Test Qdrant"):
+    qdrant = get_qdrant()
+    st.write(qdrant.get_collections())
+######
 
 # ----------------------------
 # 1. Extract text from PDF
