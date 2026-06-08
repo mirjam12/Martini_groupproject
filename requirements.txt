@@ -4,3 +4,4 @@ python-dateutil
 sentence-transformers
 qdrant-client
 torch
+torchvision
