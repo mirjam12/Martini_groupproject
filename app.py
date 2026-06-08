@@ -6,6 +6,7 @@ from dateutil import parser
 
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
+import os
 
 # ----------------------------
 # 1. Extract text from PDF
@@ -105,9 +106,16 @@ def structural_score(text):
 def load_model():
     return SentenceTransformer("all-MiniLM-L6-v2")
 
+# API key + url are saved in Streamlit secrets! Retrieving them: 
+st.secrets["QDRANT_URL"]
+st.secrets["QDRANT_API_KEY"]
+
 @st.cache_resource
 def get_qdrant():
-    return QdrantClient(url="http://localhost:6333", api_key=None)
+    return QdrantClient(
+    url=os.getenv("QDRANT_URL"),
+    api_key=os.getenv("QDRANT_API_KEY")
+)
 
 def duplication_score(text, collection_name="documents"):
     model = load_model()
@@ -324,7 +332,7 @@ def discrimination_check(text):
 
     for term in suspicious_terms:
         if term.lower() in text.lower():
-            return False, f"Potential discriminatory phrase: {term}"
+            return False, f"Potential discriminatory phrase: {term}. Please check document!"
 
     return True, "Passed"
 
