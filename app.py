@@ -9,6 +9,7 @@ from qdrant_client import QdrantClient
 import os
 from openai import OpenAI
 
+''' This part not relevant for demo
 # ----------------------------
 # 0. OpenAI + Qdrant setup
 # ----------------------------
@@ -32,7 +33,7 @@ def get_qdrant():
 
 @st.cache_data
 def get_embedding(text):
-    return embed(text)
+    return embed(text) '''
 
 # ----------------------------
 # 1. Extract text from PDF
@@ -126,49 +127,37 @@ def structural_score(text):
 
 
 # ----------------------------
-# 4. Duplication logic (0–20)
+# 4. Duplication logic (0–20) for demo, no need for database connections
 # ----------------------------
 
-def duplication_score(text, collection_name="documents"):
-    #model = load_model()
-    qdrant = get_qdrant()
+def duplication_score(text):
+    text_words = set(re.findall(r"\w+", text.lower()))
 
-    vector = get_embedding(text)
+    reference_docs = [
+        "patient discharge summary medical report treatment plan",
+        "hr policy document leave vacation guidelines employee",
+        "financial report quarterly revenue expenses summary",
+        "clinical guideline hospital infection control procedure",
+        "data protection gdpr compliance policy document"
+    ]
 
-    def safe_truncate(text, max_chars=8000):
-        return text[:max_chars]
-    vector = embed(safe_truncate(text))
+    def similarity(a, b):
+        a_set = set(a.split())
+        b_set = set(b.split())
+        if not a_set or not b_set:
+            return 0
+        return len(a_set & b_set) / len(a_set | b_set)
 
-    try:
-        # Checking if collection exists first
-        collections = qdrant.get_collections().collections
-        collection_names = [c.name for c in collections]
-
-        if collection_name not in collection_names:
-            return 20, 0.0, "Collection missing — treated as unique"
-
-        results = qdrant.search(
-            collection_name=collection_name,
-            query_vector=vector,
-            limit=5
-        )
-    except Exception as e:
-        return 10, 0.0, f"Qdrant error: {str(e)}"
-
-    if not results:
-        return 20, 0.0, "No matches found — unique"
-
-    max_similarity = max(hit.score for hit in results)
-    similarity_pct = max_similarity * 100
+    max_sim = max(similarity(text.lower(), doc) for doc in reference_docs)
+    similarity_pct = max_sim * 100
 
     if similarity_pct < 30:
         return 20, similarity_pct, "Unique (<30% similarity)"
-    elif 30 <= similarity_pct <= 60:
+    elif similarity_pct <= 60:
         return 10, similarity_pct, "Minor overlap (30–60%)"
     else:
         return 0, similarity_pct, "Substantial overlap (>60%)"
-
-
+    
 # ----------------------------
 # 5. Owner validation (0–15)
 # ----------------------------
