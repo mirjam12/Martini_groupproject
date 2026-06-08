@@ -4,10 +4,31 @@ from datetime import datetime
 import pdfplumber
 from dateutil import parser
 
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 import os
+from openai import OpenAI
 
+# ----------------------------
+# 0. OpenAI + Qdrant setup
+# ----------------------------
+
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+def embed(text):
+    return client.embeddings.create(
+        model="text-embedding-3-small",
+        input=text
+    ).data[0].embedding
+
+
+@st.cache_resource
+def get_qdrant():
+    return QdrantClient(
+        url=st.secrets["QDRANT_URL"],
+        api_key=st.secrets["QDRANT_API_KEY"],
+        check_compatibility=False
+    )
 
 # ----------------------------
 # 1. Extract text from PDF
@@ -103,23 +124,12 @@ def structural_score(text):
 # ----------------------------
 # 4. Duplication logic (0–20)
 # ----------------------------
-@st.cache_resource
-def load_model():
-    return SentenceTransformer("all-MiniLM-L6-v2")
-
-# API key + url are saved in Streamlit secrets! Retrieving them: 
-@st.cache_resource
-def get_qdrant():
-    return QdrantClient(
-        url=st.secrets["QDRANT_URL"],
-        api_key=st.secrets["QDRANT_API_KEY"]
-    )
 
 def duplication_score(text, collection_name="documents"):
-    model = load_model()
+    #model = load_model()
     qdrant = get_qdrant()
 
-    vector = model.encode(text).tolist()
+    vector = embed(text)
 
     try:
         # Checking if collection exists first
@@ -134,8 +144,8 @@ def duplication_score(text, collection_name="documents"):
             query_vector=vector,
             limit=5
         )
-    except Exception:
-        return 10, 0.0, "Qdrant unavailable — default minor overlap"
+    except Exception as e:
+        return 10, 0.0, f"Qdrant error: {str(e)}"
 
     if not results:
         return 20, 0.0, "No matches found — unique"
