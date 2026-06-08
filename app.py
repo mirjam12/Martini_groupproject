@@ -30,6 +30,10 @@ def get_qdrant():
         check_compatibility=False
     )
 
+@st.cache_data
+def get_embedding(text):
+    return embed(text)
+
 # ----------------------------
 # 1. Extract text from PDF
 # ----------------------------
@@ -129,7 +133,11 @@ def duplication_score(text, collection_name="documents"):
     #model = load_model()
     qdrant = get_qdrant()
 
-    vector = embed(text)
+    vector = get_embedding(text)
+
+    def safe_truncate(text, max_chars=8000):
+        return text[:max_chars]
+    vector = embed(safe_truncate(text))
 
     try:
         # Checking if collection exists first
