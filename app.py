@@ -9,31 +9,6 @@ from qdrant_client import QdrantClient
 import os
 from openai import OpenAI
 
-''' This part not relevant for demo
-# ----------------------------
-# 0. OpenAI + Qdrant setup
-# ----------------------------
-
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
-def embed(text):
-    return client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text
-    ).data[0].embedding
-
-
-@st.cache_resource
-def get_qdrant():
-    return QdrantClient(
-        url=st.secrets["QDRANT_URL"],
-        api_key=st.secrets["QDRANT_API_KEY"],
-        check_compatibility=False
-    )
-
-@st.cache_data
-def get_embedding(text):
-    return embed(text) '''
 
 # ----------------------------
 # 1. Extract text from PDF
