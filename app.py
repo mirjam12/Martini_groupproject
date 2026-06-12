@@ -34,7 +34,7 @@ def timeliness_score(last_updated_year):
     elif 2018 <= last_updated_year <= 2021:
         return 12
     else:
-        return 0
+        return 0 # "Document may contain outdated information. Review recommended to support GDPR data accuracy requirements."
 
 
 def extract_last_updated_year(text):
@@ -166,7 +166,7 @@ def owner_validation_score(text):
     if owner in VALID_OWNERS:
         return 15, owner, f"Valid owner: {owner}"
 
-    return 0, owner, f"Unrecognized owner: {owner} — flagged for review"
+    return 0, owner, f"Unrecognized owner: {owner} — flagged for review. GDPR accountability principle requires clear responsibility for information governance and maintenance."
 
 
 # ----------------------------
@@ -325,7 +325,7 @@ def discrimination_check(text):
     if penalties:
         return (
             0,  # score penalty handled outside
-            f"Human review required: potential biased or discriminatory phrasing detected: {', '.join(penalties[:5])}"
+            f"Human review required: potential biased or discriminatory phrasing detected: {', '.join(penalties[:5])}. Flagged under EU AI Act principles regarding fairness, non-discrimination, and human oversight."
         )
 
     return (15, "Passed")
@@ -340,10 +340,10 @@ def check_security_compliance(text):
     Returns (is_valid, reason)
     """
     if contains_script_tags(text):
-        return False, "Security violation: Script tags detected."
+        return False, "Security violation: Script tags detected. Potential GDPR Article 32 information security risk."
     
     if contains_sql_injection(text):
-        return False, "Security violation: Potential SQL injection detected."
+        return False, "Security violation: Potential SQL injection detected. Potential GDPR Article 32 information security risk."
     
     suspicious = suspicious_urls(text)
     if suspicious:
@@ -351,7 +351,7 @@ def check_security_compliance(text):
         
     is_draft, draft_reason = draft_check(text)
     if not is_draft:
-        return False, draft_reason
+        return False, draft_reason, "EU AI Act states: AI systems should not rely on unvalidated or incomplete documentation."
         
     is_safe, disc_reason = discrimination_check(text)
     if not is_safe:
